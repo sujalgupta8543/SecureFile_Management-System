@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure File System - Authentication</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="glass-card" id="auth-container">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SecureFS Logo" style="width: 80px; height: 80px; border-radius: 12px; margin-bottom: 1rem;">
+            <h1 style="margin-bottom: 0;"><span class="accent-text">Secure</span>FS</h1>
+        </div>
+        
+        <div id="login-view">
+            <h2>Login</h2>
+            {% if error %}
+                <div class="error-msg">{{ error }}</div>
+            {% endif %}
+            {% if message %}
+                <div class="success-msg">{{ message }}</div>
+            {% endif %}
+            <form method="POST">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required placeholder="Enter your username">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                </div>
+                <button type="submit">Access Files</button>
+            </form>
+
+
+            <div class="toggle-link">
+                Don't have an account? <a href="#" onclick="toggleAuth()">Sign up now</a>
+            </div>
+        </div>
+
+        <div id="signup-view" style="display: none;">
+            <h2>Create Account</h2>
+            <form action="/signup" method="POST">
+                <div class="input-group">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" name="username" required placeholder="Choose a username">
+                </div>
+                <div class="input-group">
+                    <label for="reg-email">Email (for 2FA)</label>
+                    <input type="email" id="reg-email" name="email" required placeholder="your@email.com">
+                </div>
+                <div class="input-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" name="password" required placeholder="Choose a strong password">
+                </div>
+                <button type="submit">Register</button>
+            </form>
+            <div class="toggle-link">
+                Already have an account? <a href="#" onclick="toggleAuth()">Log in here</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleAuth() {
+            const loginView = document.getElementById('login-view');
+            const signupView = document.getElementById('signup-view');
+            if (loginView.style.display === 'none') {
+                loginView.style.display = 'block';
+                signupView.style.display = 'none';
+            } else {
+                loginView.style.display = 'none';
+                signupView.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

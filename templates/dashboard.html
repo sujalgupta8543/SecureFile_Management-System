@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Secure File System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body style="display: block;">
+    <nav class="nav-header">
+        <h2 style="margin-bottom: 0;"><span class="accent-text">Secure</span>FS Dashboard</h2>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <span>Welcome, <strong>{{ user }}</strong></span>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar: File List -->
+        <aside class="sidebar">
+            <div class="glass-card" style="max-width: 100%; padding: 1.5rem;">
+                <h3 class="section-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                    My Vault
+                </h3>
+                
+                <ul class="file-list">
+                    {% if files %}
+                        {% for file in files %}
+                            <li class="file-item" onclick="selectFile('{{ file }}')">
+                                <span>{{ file }}</span>
+                                <span class="tag">Protected</span>
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">No files found. Create your first one!</div>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div class="glass-card" style="max-width: 100%; padding: 1.5rem; margin-top: 1.5rem;">
+                <h3 class="section-title">New Secure File</h3>
+                <form method="POST">
+                    <input type="hidden" name="action" value="create">
+                    <div class="input-group">
+                        <label>Filename</label>
+                        <input type="text" name="filename" required placeholder="example.txt">
+                    </div>
+                    <div class="input-group">
+                        <label>Content</label>
+                        <textarea name="content" rows="4" style="width: 100%;" placeholder="Enter secure content..."></textarea>
+                    </div>
+                    <button type="submit">Encrypt & Save</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content: File Actions -->
+        <main class="main-content">
+            {% if message %}
+                <div class="{% if 'Denied' in message or 'No' in message or 'Violation' in message %}error-msg{% else %}success-msg{% endif %}">
+                    {{ message }}
+                </div>
+            {% endif %}
+
+
+            <div class="glass-card" style="max-width: 100%; padding: 2rem;">
+                <h3 class="section-title">File Operations</h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div>
+                        <form method="POST" id="action-form">
+                            <input type="hidden" name="action" id="form-action" value="read">
+                            <div class="input-group">
+                                <label>Selected File</label>
+                                <input type="text" name="filename" id="selected-filename" readonly placeholder="Click a file from the vault">
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem;">
+                                <button type="button" onclick="setAction('read')">Read Content</button>
+                                <button type="button" onclick="setAction('metadata')" style="background: rgba(255,255,255,0.1); color: white;">Metadata</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div style="border-left: 1px solid var(--glass-border); padding-left: 1.5rem;">
+                        <form method="POST">
+                            <input type="hidden" name="action" value="share">
+                            <div class="input-group">
+                                <label>Share File</label>
+                                <input type="text" name="filename" id="share-filename" readonly placeholder="Select a file">
+                            </div>
+                            <div class="input-group">
+                                <label>Recipient Username</label>
+                                <input type="text" name="target" required placeholder="User to share with">
+                            </div>
+                            <button type="submit" style="background: var(--accent-secondary);">Grant Access</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            {% if file_content %}
+                <div class="glass-card" style="max-width: 100%; padding: 2rem; margin-top: 1.5rem;">
+                    <h3 class="section-title">Decrypted Content</h3>
+                    <div class="content-display">{{ file_content }}</div>
+                </div>
+            {% endif %}
+
+            {% if file_metadata %}
+                <div class="glass-card" style="max-width: 100%; padding: 2rem; margin-top: 1.5rem;">
+                    <h3 class="section-title">File Metadata</h3>
+                    <div class="metadata-grid">
+                        {% for key, value in file_metadata.items() %}
+                            <div class="meta-item">
+                                <span class="meta-label">{{ key|capitalize }}</span>
+                                <span class="meta-value">{{ value }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <script>
+        function selectFile(name) {
+            document.getElementById('selected-filename').value = name;
+            document.getElementById('share-filename').value = name;
+            
+            // Highlight selected
+            document.querySelectorAll('.file-item').forEach(item => {
+                item.style.borderColor = 'transparent';
+                if(item.innerText.includes(name)) item.style.borderColor = 'var(--accent-primary)';
+            });
+        }
+
+        function setAction(action) {
+            const filename = document.getElementById('selected-filename').value;
+            if (!filename) {
+                alert("Please select a file from the vault first.");
+                return;
+            }
+            document.getElementById('form-action').value = action;
+            document.getElementById('action-form').submit();
+        }
+    </script>
+</body>
+</html>
