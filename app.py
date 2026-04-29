@@ -56,7 +56,8 @@ def signup_user():
     u = request.form["username"]
     p = request.form["password"]
     if signup(u, p):
-        return render_template("login.html", message="Account created! Please log in.")
+        session["pre_auth_user"] = u
+        return redirect(url_for("two_factor"))
     else:
         return render_template("login.html", error="Username already exists.")
 

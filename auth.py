@@ -11,10 +11,16 @@ def get_path(filename):
 
 USER_DB = get_path("users.json")
 def load_users():
-    if os.path.exists(USER_DB):
+    users = {}
+    if os.path.exists("users.json"):
+        with open("users.json", "r") as f:
+            try: users.update(json.load(f))
+            except: pass
+    if USER_DB != "users.json" and os.path.exists(USER_DB):
         with open(USER_DB, "r") as f:
-            return json.load(f)
-    return {}
+            try: users.update(json.load(f))
+            except: pass
+    return users
 
 def save_users(users):
     with open(USER_DB, "w") as f:

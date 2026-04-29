@@ -14,10 +14,17 @@ OWNERSHIP_FILE = get_path("ownership.json")
 SHARED_FILE = get_path("shared.json")
 
 def load_json(filename):
-    if os.path.exists(filename):
+    data = {}
+    base_name = os.path.basename(filename)
+    if os.path.exists(base_name):
+        with open(base_name, "r") as f:
+            try: data.update(json.load(f))
+            except: pass
+    if filename != base_name and os.path.exists(filename):
         with open(filename, "r") as f:
-            return json.load(f)
-    return {}
+            try: data.update(json.load(f))
+            except: pass
+    return data
 
 def save_json(filename, data):
     with open(filename, "w") as f:
