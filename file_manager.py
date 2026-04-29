@@ -3,9 +3,12 @@ import os
 import time
 import json
 
-METADATA_FILE = "metadata.json"
-OWNERSHIP_FILE = "ownership.json"
-SHARED_FILE = "shared.json"
+def get_path(filename):
+    return os.path.join("/tmp", filename) if os.environ.get("VERCEL") else filename
+
+METADATA_FILE = get_path("metadata.json")
+OWNERSHIP_FILE = get_path("ownership.json")
+SHARED_FILE = get_path("shared.json")
 
 def load_json(filename):
     if os.path.exists(filename):
@@ -24,13 +27,13 @@ metadata = load_json(METADATA_FILE)
 def write_file(filename, content):
     encrypted = encrypt_data(content)
     # Ensure subdirectory or naming convention for files to avoid path traversal
-    safe_filename = os.path.basename(filename)
+    safe_filename = get_path(os.path.basename(filename))
     with open(safe_filename, "wb") as f:
         f.write(encrypted)
     print(f"File {safe_filename} saved securely!")
 
 def read_file(filename):
-    safe_filename = os.path.basename(filename)
+    safe_filename = get_path(os.path.basename(filename))
     if not os.path.exists(safe_filename):
         return "File not found!"
     with open(safe_filename, "rb") as f:

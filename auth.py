@@ -3,8 +3,10 @@ import json
 import os
 import pyotp
 
-USER_DB = "users.json"
+def get_path(filename):
+    return os.path.join("/tmp", filename) if os.environ.get("VERCEL") else filename
 
+USER_DB = get_path("users.json")
 def load_users():
     if os.path.exists(USER_DB):
         with open(USER_DB, "r") as f:

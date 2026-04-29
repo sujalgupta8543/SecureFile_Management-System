@@ -1,8 +1,10 @@
 from cryptography.fernet import Fernet
 import os
 
-KEY_FILE = "secret.key"
+def get_path(filename):
+    return os.path.join("/tmp", filename) if os.environ.get("VERCEL") else filename
 
+KEY_FILE = get_path("secret.key")
 def load_key():
     if os.path.exists(KEY_FILE):
         with open(KEY_FILE, "rb") as f:
