@@ -4,7 +4,10 @@ import time
 import json
 
 def get_path(filename):
-    return os.path.join("/tmp", filename) if os.environ.get("VERCEL") else filename
+    try:
+        return filename if os.access(".", os.W_OK) else os.path.join("/tmp", filename)
+    except:
+        return os.path.join("/tmp", filename)
 
 METADATA_FILE = get_path("metadata.json")
 OWNERSHIP_FILE = get_path("ownership.json")

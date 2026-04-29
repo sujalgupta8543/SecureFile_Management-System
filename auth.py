@@ -4,7 +4,10 @@ import os
 import pyotp
 
 def get_path(filename):
-    return os.path.join("/tmp", filename) if os.environ.get("VERCEL") else filename
+    try:
+        return filename if os.access(".", os.W_OK) else os.path.join("/tmp", filename)
+    except:
+        return os.path.join("/tmp", filename)
 
 USER_DB = get_path("users.json")
 def load_users():

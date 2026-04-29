@@ -2,7 +2,10 @@ from cryptography.fernet import Fernet
 import os
 
 def get_path(filename):
-    return os.path.join("/tmp", filename) if os.environ.get("VERCEL") else filename
+    try:
+        return filename if os.access(".", os.W_OK) else os.path.join("/tmp", filename)
+    except:
+        return os.path.join("/tmp", filename)
 
 KEY_FILE = get_path("secret.key")
 def load_key():
