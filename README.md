@@ -37,14 +37,14 @@ secure-file-system/
 
 ⚙️ Installation & Setup
 1. Clone the repository
-bashgit clone https://github.com/your-username/secure-file-system.git
+bashgit clone https://github.com/sujalgupta8543/SecureFile_Management-System
 cd secure-file-system
 2. Install dependencies
 bashpip install -r requirements.txt
 3. Run the application
 bashpython app.py
 4. Open in browser
-http://localhost:5000
+https://secure-file-management-system-blue.vercel.app/
 
 📦 Dependencies
 flask
